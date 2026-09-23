@@ -1,5 +1,21 @@
 # Multi-AI Chat — Chrome Side Panel
 
+<!-- freedom-repository-guide:start -->
+## 在自由工坊的位置
+
+[自由工坊](https://freetwai.com) 讓會員先完成定位、選擇公會並領取 Repo 技能書，再以供貨、商店、開源作品、行銷與小隊共同完成成果。
+
+AI 開發公會可用的 Chrome 側欄多模型協作工具來源。 保留 Chrome extension、頁面 adapters 與同步對話介面。
+
+工坊 fork 沒有發布自己的 Chrome Web Store 版本，也不共用平台登入或會員 cookie。
+
+工坊 Fork：上游產品／授權來源為 [teddashh/multi-ai-chat](https://github.com/teddashh/multi-ai-chat)；本次協作的 Issue／PR 送到 **FreeTWAI-AI/multi-ai-chat**，不是自動送往上游。
+
+程式／內容入口：[src/](src/)、[public/](public/)、[test/](test/)、[scripts/check-version.js](scripts/check-version.js)、[webpack.config.js](webpack.config.js)。協作先讀 [CONTRIBUTING.md](CONTRIBUTING.md)，讓 Agent 讀 [AGENTS.md](AGENTS.md)；從[本倉 Issues](https://github.com/FreeTWAI-AI/multi-ai-chat/issues)認領、[查看既有 PR](https://github.com/FreeTWAI-AI/multi-ai-chat/pulls)避免重工。
+
+登入與 provider 網頁會話留在使用者瀏覽器；中央資料庫不收聊天內容、cookies 或擴充套件 profile。擴大 host permissions 與正式商店發布要在對應任務中明確處理。 跨 repo 的協定由[中央平台](https://github.com/FreeTWAI-AI/freedom-platform)維護。
+<!-- freedom-repository-guide:end -->
+
 **English** · [繁體中文](./README.zh-TW.md) · [日本語](./README.ja.md) · [Deutsch](./README.de.md) · [한국어](./README.ko.md)
 
 [Install from the Chrome Web Store](https://chromewebstore.google.com/detail/multi-ai-chat/nomhpmmhkmolkmpkjfeainjoifkipdah) · [Official website](https://teddashh.github.io/multi-ai-chat/) · [v0.3.0 release](https://github.com/teddashh/multi-ai-chat/releases/tag/v0.3.0) · [Desktop edition](https://teddashh.github.io/multi-ai-chat-desktop/)
