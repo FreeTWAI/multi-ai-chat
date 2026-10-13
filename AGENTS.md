@@ -9,7 +9,7 @@ AI 開發公會可用的 Chrome 側欄多模型協作工具來源。
 
 保留 Chrome extension、頁面 adapters 與同步對話介面。 工坊 fork 沒有發布自己的 Chrome Web Store 版本，也不共用平台登入或會員 cookie。
 
-工坊 Fork：上游產品／授權來源為 [teddashh/multi-ai-chat](https://github.com/teddashh/multi-ai-chat)；本次協作的 Issue／PR 送到 **FreeTWAI-AI/multi-ai-chat**，不是自動送往上游。
+工坊 Fork：上游產品／授權來源為 [teddashh/multi-ai-chat](https://github.com/teddashh/multi-ai-chat)；本次協作的 Issue／PR 送到 **FreeTWAI/multi-ai-chat**，不是自動送往上游。
 
 先讀本倉 README、CONTRIBUTING、現有上游產品／授權說明，以及受影響目錄的 AGENTS。Issue 的最新討論與 PR 才是任務／審查紀錄，平台摘要只是索引。
 
@@ -27,9 +27,9 @@ AI 開發公會可用的 Chrome 側欄多模型協作工具來源。
 
 ### 接手與交付
 
-1. 讀[目前 Issues](https://github.com/FreeTWAI-AI/multi-ai-chat/issues)與[已開 PR](https://github.com/FreeTWAI-AI/multi-ai-chat/pulls)，確認範圍、完成條件、既有認領與相依工作。
+1. 讀[目前 Issues](https://github.com/FreeTWAI/multi-ai-chat/issues)與[已開 PR](https://github.com/FreeTWAI/multi-ai-chat/pulls)，確認範圍、完成條件、既有認領與相依工作。
 2. 一般社群貢獻先留言提出認領範圍，讓維護者確認；若當前對話已獲明確派工，沿用授權直接做，不再發明確認關卡。不要自行發送訊息或建立 Issue，除非任務已授權。
-3. 使用自己的 fork／工作分支或已授權分支。PR 目標為 `FreeTWAI-AI/multi-ai-chat` 的目前預設分支 `master`；不自動 force-push、合併、發版或擴大外部操作。
+3. 使用自己的 fork／工作分支或已授權分支。PR 目標為 `FreeTWAI/multi-ai-chat` 的目前預設分支 `master`；不自動 force-push、合併、發版或擴大外部操作。
 4. PR 附原 Issue、前後行為、檔案範圍、實跑命令／結果與未驗證部分；交接列 commit、下一步及真正卡點。保留真實 GitHub 作者、review 與 merged SHA，不把未驗證 slug、點讚或使用 AI 轉成 XP／報酬／職務證明。
 
 ### 驗證

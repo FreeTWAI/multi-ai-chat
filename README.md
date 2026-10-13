@@ -9,11 +9,11 @@ AI 開發公會可用的 Chrome 側欄多模型協作工具來源。 保留 Chro
 
 工坊 fork 沒有發布自己的 Chrome Web Store 版本，也不共用平台登入或會員 cookie。
 
-工坊 Fork：上游產品／授權來源為 [teddashh/multi-ai-chat](https://github.com/teddashh/multi-ai-chat)；本次協作的 Issue／PR 送到 **FreeTWAI-AI/multi-ai-chat**，不是自動送往上游。
+工坊 Fork：上游產品／授權來源為 [teddashh/multi-ai-chat](https://github.com/teddashh/multi-ai-chat)；本次協作的 Issue／PR 送到 **FreeTWAI/multi-ai-chat**，不是自動送往上游。
 
-程式／內容入口：[src/](src/)、[public/](public/)、[test/](test/)、[scripts/check-version.js](scripts/check-version.js)、[webpack.config.js](webpack.config.js)。協作先讀 [CONTRIBUTING.md](CONTRIBUTING.md)，讓 Agent 讀 [AGENTS.md](AGENTS.md)；從[本倉 Issues](https://github.com/FreeTWAI-AI/multi-ai-chat/issues)認領、[查看既有 PR](https://github.com/FreeTWAI-AI/multi-ai-chat/pulls)避免重工。
+程式／內容入口：[src/](src/)、[public/](public/)、[test/](test/)、[scripts/check-version.js](scripts/check-version.js)、[webpack.config.js](webpack.config.js)。協作先讀 [CONTRIBUTING.md](CONTRIBUTING.md)，讓 Agent 讀 [AGENTS.md](AGENTS.md)；從[本倉 Issues](https://github.com/FreeTWAI/multi-ai-chat/issues)認領、[查看既有 PR](https://github.com/FreeTWAI/multi-ai-chat/pulls)避免重工。
 
-登入與 provider 網頁會話留在使用者瀏覽器；中央資料庫不收聊天內容、cookies 或擴充套件 profile。擴大 host permissions 與正式商店發布要在對應任務中明確處理。 跨 repo 的協定由[中央平台](https://github.com/FreeTWAI-AI/freedom-platform)維護。
+登入與 provider 網頁會話留在使用者瀏覽器；中央資料庫不收聊天內容、cookies 或擴充套件 profile。擴大 host permissions 與正式商店發布要在對應任務中明確處理。 跨 repo 的協定由[中央平台](https://github.com/FreeTWAI/freedom-platform)維護。
 <!-- freedom-repository-guide:end -->
 
 **English** · [繁體中文](./README.zh-TW.md) · [日本語](./README.ja.md) · [Deutsch](./README.de.md) · [한국어](./README.ko.md)
