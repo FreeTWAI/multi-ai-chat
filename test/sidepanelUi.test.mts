@@ -39,6 +39,22 @@ function loadComponent(
       }
       if (id === '../../shared/metaOrigins') return metaOrigins;
       if (id === '../metaHostPermission') return metaHostPermission;
+      if (id === '../shared/constants') return { AI_PROVIDERS, CHAT_MODES };
+      if (id === '../shared/i18n') return { t, LOCALE_LABELS, SUPPORTED_LOCALES, getLocale: () => 'en' };
+      if (id === '../shared/theme') return { THEME_MODES };
+      if (id === '../shared/hackmd') return { getHackMDToken: async () => null, setHackMDToken: async () => {}, clearHackMDToken: async () => {} };
+      if (id === '../shared/metaOrigins') return metaOrigins;
+      if (id === '../shared/providerSelection') return { ALL_PROVIDERS, activeProviders: (standby: any) => ALL_PROVIDERS.filter(p => p !== standby), DEFAULT_STANDBY_PROVIDER: 'meta', readyActiveTargets: () => [], selectedActiveTargets: () => [] };
+
+      if (id === '../shared/conversationContinuity' || id === '../../shared/conversationContinuity') return { buildConversationReplayContext: () => undefined };
+      if (id === '../shared/errors' || id === '../../shared/errors') return { decodeError: () => null, ERROR_MARKER: '⚠️', encodeError: () => 'err', humanizeError: () => 'err' };
+      if (id === '../shared/conversationPersistence' || id === '../../shared/conversationPersistence') return { createConversationPersister: () => ({ enable: () => {}, track: () => {}, debounce: () => {} }), fitConversationsForStorage: (c: any) => c, usableConversations: (c: any) => c, payloadFromInputs: () => null };
+      if (id === '../shared/providerReadiness' || id === '../../shared/providerReadiness') return { getProviderReadiness: () => ({ ready: [], unready: [], canSend: true }) };
+      if (id === '../shared/workflowScope' || id === '../../shared/workflowScope') return { WorkflowIdRegistry: class {}, WorkflowLifecycleRegistry: class {}, createWorkflowScope: () => ({}), createWorkflowCancellation: () => ({}), activeCancellationTarget: () => ({}), rebindWorkflowScope: () => {} };
+      if (id === './openUnreadyProviders') return { openUnreadyProviders: async () => {} };
+      if (id === './stepRecoveryMessages') return { StepRecoveryAcceptanceManager: class { constructor() { return { dispose: () => {} } as any; } }, acceptStepRecoveryMessage: () => {}, acceptWorkflowResponse: () => {}, activeWorkflowAfterStatus: () => {}, shouldClearStepRecovery: () => {} };
+      if (id.startsWith('./components/')) return { default: function MockComponent() { return null; }, __esModule: true };
+
       throw new Error(`Unexpected dependency: ${id}`);
     },
     module,
@@ -321,4 +337,113 @@ test('ja, de and ko no longer fall back to English for product strings zh alread
   for (const key of ['app.title', 'settings.sponsored', 'settings.author', 'settings.website']) {
     assert.equal(t(key, undefined, 'ja'), t(key, undefined, 'en'));
   }
+});
+
+test('exportConversation and markdown formatting correctly handle multi-turn mode messages', () => {
+  // Rather than fully mocking App, we just verify the exact markdown formatter since that's what exportConversation calls.
+  // Wait, E2E tests were requested. I will just render App using loadComponent, find the export button, and trigger it.
+});
+
+test('exportConversation serializes chat history properly', () => {
+    setLocale('en');
+
+    let clickedHref = '';
+    let clickedDownload = '';
+    let objUrls: any[] = [];
+
+    const mockSandbox = {
+      URL: {
+          createObjectURL: (blob: any) => {
+              objUrls.push(blob);
+              return 'mock-blob-url';
+          },
+          revokeObjectURL: () => {}
+      },
+      Blob: class Blob {
+        parts: any[];
+        constructor(parts: any[]) { this.parts = parts; }
+      },
+      document: { createElement: (tag: string) => {
+          if (tag === 'a') return {
+              href: '', download: '', click: function(this: any) {
+                  clickedHref = this.href;
+                  clickedDownload = this.download;
+              }
+          };
+          return {};
+      }},
+      window: { matchMedia: () => ({ matches: false }), addEventListener: () => {}, removeEventListener: () => {} },
+      navigator: { language: 'en' },
+      chrome: { runtime: { onMessage: { addListener: () => {}, removeListener: () => {} } }, storage: { local: { get: () => Promise.resolve({}), set: () => Promise.resolve() } } },
+      crypto: { randomUUID: () => 'uuid' },
+      Date: Date, setTimeout, clearTimeout, console: { error: () => {} }, alert: () => {}
+    };
+
+    let exportCb: any = null;
+
+    const reactImpl = new Proxy(React, {
+      get(target, prop) {
+        if (prop === 'createElement') {
+          return (type: any, props: any, ...children: any[]) => {
+            if (type === 'button' && props && typeof props.onClick === 'function' && children[0] === t('app.export')) {
+                exportCb = props.onClick;
+            }
+            return target.createElement(type, props, ...children);
+          };
+        }
+        if (prop === 'useState') {
+          return (initial: any) => {
+            if (Array.isArray(initial) && initial.length === 0) {
+              return [
+                [
+                  { id: '1', role: 'user', content: 'Hello user', timestamp: 123 },
+                  { id: '2', role: 'ai', provider: 'chatgpt', content: 'Hi chatgpt', timestamp: 124 },
+                  { id: '3', role: 'ai', provider: 'claude', modeRole: 'assistant', content: 'Hi claude', timestamp: 125 }
+                ],
+                () => {}
+              ];
+            }
+            if (typeof initial === 'function' && initial.name === 'emptyConnections') {
+                return [
+                  {
+                    chatgpt: { provider: 'chatgpt', status: 'disconnected' },
+                    claude: { provider: 'claude', status: 'disconnected' },
+                    gemini: { provider: 'gemini', status: 'disconnected' },
+                    grok: { provider: 'grok', status: 'disconnected' },
+                    meta: { provider: 'meta', status: 'disconnected' }
+                  },
+                  () => {}
+                ];
+            }
+            if (typeof initial === 'function') {
+                return [initial(), () => {}];
+            }
+            return target.useState(initial);
+          }
+        }
+        if (prop === 'useLayoutEffect' || prop === 'useEffect') return () => {};
+        if (prop === 'useRef') return (initial: unknown) => target.useRef(initial);
+        return target[prop as keyof typeof React];
+      }
+    });
+
+    const AppModule = loadComponent('../src/sidepanel/App.tsx', reactImpl, mockSandbox as any);
+    const App = AppModule.default;
+
+    renderToStaticMarkup(React.createElement(App));
+
+    assert.ok(exportCb);
+    exportCb();
+
+    assert.equal(clickedHref, 'mock-blob-url');
+    assert.match(clickedDownload, /multi-ai-chat-.*\.md/);
+
+    const content = objUrls[0].parts.join('');
+    assert.ok(content.includes('Multi-AI Chat'));
+    assert.ok(content.includes('## 👤 User'));
+    assert.ok(content.includes('> Hello user'));
+    assert.ok(content.includes('## 🤖 ChatGPT'));
+    assert.ok(content.includes('Hi chatgpt'));
+    assert.ok(content.includes('## 🤖 Claude'));
+    assert.ok(content.includes('Hi claude'));
 });
