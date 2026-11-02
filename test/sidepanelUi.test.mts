@@ -35,7 +35,7 @@ function loadComponent(
       if (id === '../../shared/providerSelection') return { ALL_PROVIDERS };
       if (id === '../../shared/theme') return { THEME_MODES };
       if (id === '../../shared/hackmd') {
-        return { getHackMDToken: async () => null, setHackMDToken: async () => {}, clearHackMDToken: async () => {} };
+        return { hasHackMDToken: async () => false, setHackMDToken: async () => {}, clearHackMDToken: async () => {} };
       }
       if (id === '../../shared/metaOrigins') return metaOrigins;
       if (id === '../metaHostPermission') return metaHostPermission;
