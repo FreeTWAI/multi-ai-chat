@@ -23,7 +23,7 @@ import {
 } from '../shared/constants';
 import { getLocale, setLocale as setActiveLocale, SUPPORTED_LOCALES, t } from '../shared/i18n';
 import { applyTheme, THEME_MODES, watchSystemTheme } from '../shared/theme';
-import { getHackMDToken, publishToHackMD } from '../shared/hackmd';
+import { hasHackMDToken, publishToHackMD } from '../shared/hackmd';
 import { buildConversationReplayContext } from '../shared/conversationContinuity';
 import {
   MAX_CONVERSATIONS,
@@ -751,8 +751,8 @@ export default function App() {
 
   const publishConversation = async () => {
     if (!messages.length) return alert(t('publish.empty'));
-    const token = await getHackMDToken();
-    if (!token) {
+    const hasToken = await hasHackMDToken();
+    if (!hasToken) {
       alert(t('publish.no_token'));
       setIsSettingsOpen(true);
       return;
@@ -760,7 +760,7 @@ export default function App() {
     setIsPublishing(true);
     try {
       const { title, content } = buildMarkdown(messages, mode);
-      const { publishLink } = await publishToHackMD(`${title} — ${new Date().toLocaleString()}`, content, token);
+      const { publishLink } = await publishToHackMD(`${title} — ${new Date().toLocaleString()}`, content);
       await navigator.clipboard.writeText(publishLink).catch(() => {});
       alert(`${t('publish.success')}\n\n${publishLink}`);
       window.open(publishLink, '_blank', 'noopener,noreferrer');

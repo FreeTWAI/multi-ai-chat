@@ -2,7 +2,7 @@ import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import type { AIProvider, Locale, ThemeMode } from '../../shared/types';
 import { ALL_PROVIDERS } from '../../shared/providerSelection';
 import { AI_PROVIDERS } from '../../shared/constants';
-import { getHackMDToken, setHackMDToken, clearHackMDToken } from '../../shared/hackmd';
+import { hasHackMDToken, setHackMDToken, clearHackMDToken } from '../../shared/hackmd';
 import { LOCALE_LABELS, SUPPORTED_LOCALES, t } from '../../shared/i18n';
 import { THEME_MODES } from '../../shared/theme';
 import { includesMetaOrigin, META_ORIGINS } from '../../shared/metaOrigins';
@@ -53,9 +53,9 @@ export default function SettingsModal({ isOpen, locale, onLocaleChange, theme, o
       // An already requested write still completes after dismissal. Read it before allowing another edit.
       await pendingWriteRef.current?.catch(() => {});
       if (!session.active) return;
-      const existing = await getHackMDToken();
+      const existing = await hasHackMDToken();
       if (!session.active) return;
-      setToken(existing ?? '');
+      setToken(existing ? '••••••••••••••••' : '');
       updateTokenState(session, 'ready');
     } catch {
       if (!session.active) return;
@@ -149,8 +149,12 @@ export default function SettingsModal({ isOpen, locale, onLocaleChange, theme, o
     cancelButtonRef.current?.focus();
     const trimmed = token.trim();
     const operation = (async () => {
-      if (action === 'save' && trimmed) await setHackMDToken(trimmed);
-      else await clearHackMDToken();
+      // If saving the placeholder, do nothing. It's already saved.
+      if (action === 'save' && trimmed && trimmed !== '••••••••••••••••') {
+        await setHackMDToken(trimmed);
+      } else if (action === 'clear') {
+        await clearHackMDToken();
+      }
       if (action === 'save') await chrome.storage.local.set({ language: locale });
     })();
     pendingWriteRef.current = operation;
@@ -158,6 +162,7 @@ export default function SettingsModal({ isOpen, locale, onLocaleChange, theme, o
       await operation;
       if (!session.active) return;
       if (action === 'save') {
+        if (trimmed && trimmed !== '••••••••••••••••') setToken('••••••••••••••••');
         updateTokenState(session, 'saved');
         session.closeTimer = window.setTimeout(() => {
           if (session.active) dismiss();

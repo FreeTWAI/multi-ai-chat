@@ -309,7 +309,7 @@ chrome.runtime.onMessage.addListener((message: ExtensionMessage, sender, sendRes
     }
 
     case 'PUBLISH_HACKMD':
-      handleHackMDPublish(message.payload as { token: string; title: string; content: string })
+      handleHackMDPublish(message.payload as { title: string; content: string })
         .then((result) => sendResponse({ ok: true, result }))
         .catch((error) => sendResponse({ ok: false, error: errorMessage(error) }));
       return true;
@@ -1075,10 +1075,14 @@ function sendSystemError(message: string, workflowId = activeWorkflowId): void {
   }).catch(() => {});
 }
 
-async function handleHackMDPublish(payload: { token: string; title: string; content: string }) {
+async function handleHackMDPublish(payload: { title: string; content: string }) {
+  const { getHackMDToken } = await import('../shared/hackmd.js');
+  const token = await getHackMDToken();
+  if (!token) throw new Error(encodeError('error.hackmd_no_token'));
+
   const response = await fetch('https://api.hackmd.io/v1/notes', {
     method: 'POST',
-    headers: { Authorization: `Bearer ${payload.token}`, 'Content-Type': 'application/json' },
+    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({
       title: payload.title,
       content: payload.content,
@@ -1087,7 +1091,13 @@ async function handleHackMDPublish(payload: { token: string; title: string; cont
       commentPermission: 'disabled',
     }),
   });
-  if (!response.ok) throw new Error(encodeError('error.hackmd_failed', { status: response.status, detail: await response.text().catch(() => response.statusText) }));
+  if (!response.ok) {
+    let detail = await response.text().catch(() => response.statusText);
+    if (detail.includes(token)) {
+      detail = detail.split(token).join('***');
+    }
+    throw new Error(encodeError('error.hackmd_failed', { status: response.status, detail }));
+  }
   const data = (await response.json()) as { id?: string; publishLink?: string };
   const publishLink = data.publishLink || (data.id ? `https://hackmd.io/@/${data.id}/publish` : '');
   if (!publishLink) throw new Error(encodeError('error.hackmd_no_link'));
